@@ -2,21 +2,21 @@ project_name: "explore_assistant_semantic_search"
 
 # This is the ID of the BQML MODEL setup with the remote connect
 constant: BQML_REMOTE_CONNECTION_MODEL_ID {
-  value: "finance-looker-424218.semantic_search_block.semantic_search_llm"
+  value: "finance-looker-424218.semantic_search.semantic-search-llm"
 }
 
 # This is the ID of the remote connection setup in BigQuery
 constant: BQML_REMOTE_CONNECTION_ID {
-  value: "finance-looker-424218.us.semantic_search_block_vertex_ai"
+  value: "finance-looker-424218.us-central1.semantic-search-vertex-ai"
 }
 
 # This is the name of the Looker BigQuery Database connection
 constant: LOOKER_BIGQUERY_CONNECTION_NAME {
-  value: "semantic_search_block"
+  value: "explore-assistant-bigquery-connection"
 }
 
 constant: BQML_EMBEDDINGS_MODEL_ID {
-  value: "finance-looker-424218.semantic_search_block.embeddings_model"
+  value: "finance-looker-424218.semantic_search.embeddings_model"
 }
 
 application: finance_exp_assist_sem_search {

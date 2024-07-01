@@ -1,5 +1,5 @@
 view: demo_exp_assist_sem_search {
-  sql_table_name: explore_assistant.demo_exp_assist_sem_search ;;
+  sql_table_name: explore_assistant.finance_data_demo ;;
 
   dimension: cost_center {
     description: "Cost center code"

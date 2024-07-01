@@ -1,5 +1,5 @@
 view: profit_center_details {
-  sql_table_name: `finance-looker-424218.semantic_search_block.profit_center_details` ;;
+  sql_table_name: `finance-looker-424218.semantic_search.profit_center_details` ;;
 
   dimension: profit_center_code {
     description: "Profit Center Code"
