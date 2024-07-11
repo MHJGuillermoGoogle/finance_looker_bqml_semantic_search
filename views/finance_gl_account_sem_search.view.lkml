@@ -1,5 +1,68 @@
-view: demo_exp_assist_sem_search {
-  sql_table_name: explore_assistant.finance_data_sem_search_demo ;;
+view: finance_gl_account_sem_search {
+
+  derived_table: {
+    sql:
+    -- This SQL statement performs the vector search --
+    -- Step 1. Generate Embedding from natural language question --
+    -- Step 2. Specify the text_embedding column from the embeddings table that was generated for each product in this example --
+    -- Step 3. Use BQML's native Vector Search functionality to match the nearest embeddings --
+    -- Step 4. Return the matche products --
+    SELECT query.query,
+    base.gl_account_code as gl_account_code,
+    base.gl_account_description as gl_account_description,
+    base.profit_center_code,
+    base.profit_center_description,
+    base.cost_center_code,
+    base.cost_center_description,
+    base.amount,
+    base.company_code,
+    base.scenario,
+    base.fiscal_year,
+    base.fiscal_month
+    FROM VECTOR_SEARCH(
+      TABLE `finance-looker-424218.semantic_search.finance_data_sem_search_demo`, 'gl_account_text_embedding',
+      (
+        SELECT ml_generate_embedding_result, content AS query
+        FROM ML.GENERATE_EMBEDDING(
+          MODEL `@{BQML_EMBEDDINGS_MODEL_ID}`,
+          (SELECT {% parameter gl_account_search %} AS content)
+        )
+      ),
+      top_k => {% parameter gl_account_matches %}
+      ,options => '{"fraction_lists_to_search": 0.5}'
+    ) ;;
+  }
+
+  parameter: gl_account_search {
+    type: string
+  }
+
+  parameter: gl_account_matches {
+    type: number
+  }
+
+  dimension: gl_account_search_chosen {
+    type: string
+    sql: {% parameter gl_account_search %} ;;
+  }
+
+  dimension: gl_account_matches_chosen {
+    type: string
+    sql: {% parameter gl_account_matches %} ;;
+  }
+
+
+  dimension: gl_account_code {
+    description: "Cost center code"
+    type: string
+    sql: ${TABLE}.gl_account_code ;;
+  }
+
+  dimension: profit_center_code {
+    description: "Profit center code"
+    type: string
+    sql: ${TABLE}.profit_center_code ;;
+  }
 
   dimension: cost_center_code {
     description: "Cost center code"
@@ -13,22 +76,10 @@ view: demo_exp_assist_sem_search {
     sql: ${TABLE}.company_code ;;
   }
 
-  dimension: gl_account_code {
-    description: "GL account code"
-    type: string
-    sql: ${TABLE}.gl_account_code ;;
-  }
-
   dimension: scenario {
     description: "scenario"
     type: string
     sql: ${TABLE}.scenario ;;
-  }
-
-  dimension: profit_center_code {
-    description: "Profit center code"
-    type: string
-    sql: ${TABLE}.profit_center_code ;;
   }
 
   dimension: fiscal_year {
@@ -79,7 +130,7 @@ view: demo_exp_assist_sem_search {
     description: "Total amount of actuals"
     type: sum
     sql: ${amount} ;;
-    filters: [demo_exp_assist_sem_search.scenario: "ACTUAL"]
+    filters: [scenario: "ACTUAL"]
   }
 
   measure: percent_actual_total_amount {
@@ -92,7 +143,7 @@ view: demo_exp_assist_sem_search {
     description: "Total amount of actuals"
     type: sum
     sql: ${amount} ;;
-    filters: [demo_exp_assist_sem_search.scenario: "WIP_FCST"]
+    filters: [scenario: "WIP_FCST"]
   }
 
   measure: percent_forecast_total_amount {
@@ -105,7 +156,7 @@ view: demo_exp_assist_sem_search {
     description: "Total amount of actuals"
     type: sum
     sql: ${amount} ;;
-    filters: [demo_exp_assist_sem_search.scenario: "WIP_AOP"]
+    filters: [scenario: "WIP_AOP"]
   }
 
   measure: percent_aop_total_amount {

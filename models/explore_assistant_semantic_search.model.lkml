@@ -10,25 +10,30 @@ datagroup: explore_assistant_demo_default_datagroup {
 persist_with: explore_assistant_demo_default_datagroup
 
 explore: demo_exp_assist_sem_search {
-  label : "Demo dummy data"
+  label : "Demo Explore Assistant with Semantic Search"
   # from: exp_assist_sem_search_demo
   join: profit_center_sem_search {
     type: left_outer
     relationship: one_to_one
-    sql_on: ${demo_exp_assist_sem_search.profit_center} = ${profit_center_sem_search.matched_profit_center_code} ;;
+    sql_on: ${demo_exp_assist_sem_search.profit_center_code} = ${profit_center_sem_search.matched_profit_center_code} ;;
   }
 
   join: gl_account_sem_search {
     type: left_outer
     relationship: one_to_one
-    sql_on: ${demo_exp_assist_sem_search.gl_account} = ${gl_account_sem_search.matched_gl_account_code} ;;
+    sql_on: ${demo_exp_assist_sem_search.gl_account_code} = ${gl_account_sem_search.matched_gl_account_code} ;;
   }
 
   join: cost_center_sem_search {
     type: left_outer
     relationship: one_to_one
-    sql_on: ${demo_exp_assist_sem_search.cost_center} = ${cost_center_sem_search.matched_cost_center_code} ;;
+    sql_on: ${demo_exp_assist_sem_search.cost_center_code} = ${cost_center_sem_search.matched_cost_center_code} ;;
   }
+}
+
+explore: demo_finance_sem_search {
+  label: "Demo Finance Data with Semantic Search"
+  view_name: finance_gl_account_sem_search
 }
 
 explore:  profit_center_sem_search {
@@ -37,5 +42,23 @@ explore:  profit_center_sem_search {
     type: left_outer
     relationship: one_to_many
     sql_on: ${profit_center_details.profit_center_code} = ${profit_center_sem_search.matched_profit_center_code};;
+  }
+}
+
+explore:  cost_center_sem_search {
+  label: "Cost Center Semantic Search"
+  join: cost_center_details {
+    type: left_outer
+    relationship: one_to_many
+    sql_on: ${cost_center_details.cost_center_code} = ${cost_center_sem_search.matched_cost_center_code};;
+  }
+}
+
+explore:  gl_account_sem_search {
+  label: "GL Account Semantic Search"
+  join: gl_account_details {
+    type: left_outer
+    relationship: one_to_many
+    sql_on: ${gl_account_details.gl_account_code} = ${gl_account_sem_search.matched_gl_account_code};;
   }
 }
