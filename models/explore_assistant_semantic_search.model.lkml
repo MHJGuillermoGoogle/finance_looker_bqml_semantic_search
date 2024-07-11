@@ -29,5 +29,13 @@ explore: demo_exp_assist_sem_search {
     relationship: one_to_one
     sql_on: ${demo_exp_assist_sem_search.cost_center} = ${cost_center_sem_search.matched_cost_center_code} ;;
   }
+}
 
+explore:  profit_center_sem_search {
+  label: "Profit Center Semantic Search"
+  join: profit_center_details {
+    type: left_outer
+    relationship: one_to_many
+    sql_on: ${profit_center_details.profit_center_code} = ${profit_center_sem_search.matched_profit_center_code};;
+  }
 }

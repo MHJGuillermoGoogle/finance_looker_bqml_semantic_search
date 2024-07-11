@@ -1,35 +1,3 @@
-view: cost_center_embeddings {
-  derived_table: {
-    datagroup_trigger: explore_assistant_demo_default_datagroup
-    publish_as_db_view: yes
-    sql_create:
-    -- This SQL statement creates embeddings for all the rows in the given table (in this case the profit center details table) --
-    CREATE OR REPLACE TABLE ${SQL_TABLE_NAME} AS
-    SELECT ml_generate_embedding_result as text_embedding
-      , * FROM ML.GENERATE_EMBEDDING(
-      MODEL `@{BQML_EMBEDDINGS_MODEL_ID}`,
-      (
-        SELECT *, cost_center_description as content
-        FROM ${cost_center_details.SQL_TABLE_NAME}
-      )
-    )
-    WHERE LENGTH(ml_generate_embedding_status) = 0; ;;
-  }
-}
-
-view: cost_center_embeddings_index {
-  derived_table: {
-    datagroup_trigger: explore_assistant_demo_default_datagroup
-    sql_create:
-    -- This SQL statement indexes the embeddings for fast lookup. We specify COSINE similarity here --
-      CREATE OR REPLACE VECTOR INDEX ${SQL_TABLE_NAME}
-      ON ${cost_center_embeddings.SQL_TABLE_NAME}(text_embedding)
-      OPTIONS(index_type = 'IVF',
-        distance_type = 'COSINE',
-        ivf_options = '{"num_lists":500}') ;;
-  }
-}
-
 view: cost_center_sem_search {
   derived_table: {
     sql:
@@ -42,7 +10,7 @@ view: cost_center_sem_search {
     base.cost_center_code as matched_cost_center_code,
     base.cost_center_description as matched_cost_center_description
     FROM VECTOR_SEARCH(
-      TABLE ${cost_center_embeddings.SQL_TABLE_NAME}, 'text_embedding',
+      TABLE `finance-looker-424218.semantic_search.LR_FZT5J1720642974264_cost_center_embeddings`, 'text_embedding',
       (
         SELECT ml_generate_embedding_result, content AS query
         FROM ML.GENERATE_EMBEDDING(
