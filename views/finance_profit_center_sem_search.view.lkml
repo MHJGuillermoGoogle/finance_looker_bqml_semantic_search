@@ -1,4 +1,4 @@
-view: profit_center_sem_search {
+view: finance_profit_center_sem_search {
   derived_table: {
     sql:
     -- This SQL statement performs the vector search --
@@ -7,10 +7,10 @@ view: profit_center_sem_search {
     -- Step 3. Use BQML's native Vector Search functionality to match the nearest embeddings --
     -- Step 4. Return the matche products --
     SELECT query.query,
-    base.profit_center_code as matched_profit_center_code,
-    base.profit_center_description as matched_profit_center_description
+    base.profit_center_code as profit_center_code,
+    base.profit_center_description as profit_center_description
     FROM VECTOR_SEARCH(
-      TABLE `finance-looker-424218.semantic_search.profit_center_embeddings`, 'text_embedding',
+      TABLE `finance-looker-424218.semantic_search.profit_center_finance_data_demo_embeddings`,'ml_generate_embedding_result',
       (
         SELECT ml_generate_embedding_result, content AS query
         FROM ML.GENERATE_EMBEDDING(
@@ -41,13 +41,15 @@ view: profit_center_sem_search {
     sql: {% parameter profit_center_matches %} ;;
   }
 
-  dimension: matched_profit_center_code {
+  dimension: profit_center_code {
+    description: "Cost center code"
     type: string
-    sql: ${TABLE}.matched_profit_center_code ;;
+    sql: ${TABLE}.profit_center_code ;;
   }
 
-  dimension: matched_profit_center_description {
+  dimension: profit_center_description {
+    description: "Cost center code"
     type: string
-    sql: ${TABLE}.matched_profit_center_description ;;
+    sql: ${TABLE}.profit_center_description ;;
   }
 }

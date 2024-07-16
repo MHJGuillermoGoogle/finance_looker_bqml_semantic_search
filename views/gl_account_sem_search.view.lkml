@@ -10,7 +10,7 @@ view: gl_account_sem_search {
     base.gl_account_code as matched_gl_account_code,
     base.gl_account_description as matched_gl_account_description
     FROM VECTOR_SEARCH(
-      TABLE `finance-looker-424218.semantic_search.LR_FZYMW1720639348096_gl_account_embeddings`, 'text_embedding',
+      TABLE `finance-looker-424218.semantic_search.gl_account_embeddings`, 'text_embedding',
       (
         SELECT ml_generate_embedding_result, content AS query
         FROM ML.GENERATE_EMBEDDING(

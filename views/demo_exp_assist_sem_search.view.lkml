@@ -1,10 +1,10 @@
 view: demo_exp_assist_sem_search {
-  sql_table_name: explore_assistant.finance_data_sem_search_demo ;;
+  sql_table_name: explore_assistant.demo_finance_data ;;
 
   dimension: cost_center_code {
     description: "Cost center code"
     type: string
-    sql: ${TABLE}.cost_center_code ;;
+    sql: ${TABLE}.cost_center ;;
   }
 
   dimension: company_code {
@@ -16,7 +16,7 @@ view: demo_exp_assist_sem_search {
   dimension: gl_account_code {
     description: "GL account code"
     type: string
-    sql: ${TABLE}.gl_account_code ;;
+    sql: ${TABLE}.gl_account ;;
   }
 
   dimension: scenario {
@@ -28,7 +28,7 @@ view: demo_exp_assist_sem_search {
   dimension: profit_center_code {
     description: "Profit center code"
     type: string
-    sql: ${TABLE}.profit_center_code ;;
+    sql: ${TABLE}.profit_center ;;
   }
 
   dimension: fiscal_year {
@@ -69,9 +69,54 @@ view: demo_exp_assist_sem_search {
     style: integer
   }
 
+  dimension: matched_gl_account {
+    type: yesno
+    sql: ${gl_account_code} IN (
+      SELECT gl_account_code
+      FROM ${finance_gl_account_sem_search.SQL_TABLE_NAME}
+    );;
+  }
+
+  dimension: matched_cost_center {
+    type: yesno
+    sql: ${cost_center_code} IN (
+      SELECT cost_center_code
+      FROM ${finance_cost_center_sem_search.SQL_TABLE_NAME}
+    );;
+  }
+
+  dimension: matched_profit_center {
+    type: yesno
+    sql: ${profit_center_code} IN (
+      SELECT profit_center_code
+      FROM ${finance_profit_center_sem_search.SQL_TABLE_NAME}
+    );;
+  }
+
   measure: total_amount {
     description: "Use this for total amount"
     type: sum
+    sql: ${amount} ;;
+  }
+
+  measure: matched_gl_account_total_amount {
+    type: sum
+    value_format_name: usd
+    filters: [matched_gl_account: "yes"]
+    sql: ${amount} ;;
+  }
+
+  measure: matched_cost_center_total_amount {
+    type: sum
+    value_format_name: usd
+    filters: [matched_cost_center: "yes"]
+    sql: ${amount} ;;
+  }
+
+  measure: matched_profit_center_total_amount {
+    type: sum
+    value_format_name: usd
+    filters: [matched_profit_center: "yes"]
     sql: ${amount} ;;
   }
 
@@ -117,6 +162,21 @@ view: demo_exp_assist_sem_search {
   measure: count {
     description: "Use this for count rows"
     type: count
+  }
+
+  measure: matched_gl_account_count {
+    type: count
+    filters: [matched_gl_account: "yes"]
+  }
+
+  measure: matched_cost_center_count {
+    type: count
+    filters: [matched_cost_center: "yes"]
+  }
+
+  measure: matched_profit_center_count {
+    type: count
+    filters: [matched_profit_center: "yes"]
   }
 
   measure: number_of_unique_cost_center {
