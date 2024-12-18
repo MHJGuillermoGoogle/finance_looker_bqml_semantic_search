@@ -10,7 +10,7 @@ include: "/views/*.view.lkml"                # include all views in the views/ f
 # persist_with: explore_assistant_demo_default_datagroup
 
 explore: demo_exp_assist_sem_search {
-  label : "Demo Explore Assistant with Semantic Search"
+  label : "Finance data with Semantic Search"
   join: finance_profit_center_sem_search {
     type: left_outer
     relationship: one_to_one
